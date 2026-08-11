@@ -58,3 +58,84 @@ A little CNN that looks through a webcam, figures out what object it's seeing, a
 
 ---
 Made with 🧠 + ☕ + a lot of homemade object photos 📷
+----------------------------------------------------------
+## 🔧 Arduino Sketch
+
+#include <Arduino.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+// 1. Includes
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <Servo.h>
+
+// 2. Defines
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1
+#define SCREEN_ADDRESS 0x3C
+
+// 3. Object declarations
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+Servo myServo;
+const int servoPin = 8;
+
+// 4. THEN setup() and loop() below all of the above
+void setup() {
+  Serial.begin(9600);
+
+  myServo.attach(servoPin);
+  myServo.write(0);
+
+  if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println("OLED not found");
+    while (true);
+  }
+
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 20);
+  display.println("Ready");
+  display.display();
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String detected = Serial.readStringUntil('\n');
+    detected.trim(); // remove any extra whitespace/newline characters
+
+    int angle = 90; // default (juice / center)
+
+    if (detected == "apple") {
+      angle = 0;
+    } else if (detected == "banana") {
+      angle = 180;
+    } else if (detected == "cup") {
+      angle = 45;
+    } else if (detected == "phone") {
+      angle = 135;
+    } else if (detected == "juice") {
+      angle = 90;
+    }
+
+    myServo.write(angle);
+
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 20);
+    display.println(detected);
+    display.display();
+
+    Serial.print("Moved to: ");
+    Serial.println(detected);
+  }
+}
+
+
+
+
