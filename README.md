@@ -1,7 +1,8 @@
-# Object-Classifier-Arduino
-A little CNN that looks through a webcam, figures out what object it's seeing, and tells an Arduino to react — printing the object's name on an OLED screen and swinging a servo motor to a matching angle! 🎯✨
-
 # 🤖📷 Object Classifier + Arduino Buddy
+
+A little CNN that looks through a webcam, figures out what object it's seeing,
+and tells an Arduino to react — printing the object's name on an OLED screen
+and swinging a servo motor to a matching angle! 🎯✨
 
 ## 🧠 How it works
 
@@ -49,18 +50,12 @@ A little CNN that looks through a webcam, figures out what object it's seeing, a
 🔧 arduino/                  — Arduino sketch for OLED + servo control
 ```
 
-## 💡 Notes
-
-- 🎥 Camera index may need a tweak (`cv2.VideoCapture(0)` vs `(1)`) depending
-  on your webcam setup
-- 🤫 Only pings the Arduino when the prediction *changes* and confidence is
-  high, so it's not spamming the serial port every single frame
-
----
-Made with 🧠 + ☕ + a lot of homemade object photos 📷
-----------------------------------------------------------
 ## 🔧 Arduino Sketch
 
+This runs on the Arduino side — it listens for the object name over serial,
+moves the servo to a matching angle, and shows the name on the OLED. 🖥️🦾
+
+```cpp
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -135,6 +130,22 @@ void loop() {
     Serial.println(detected);
   }
 }
+```
+
+**Wiring notes:**
+- 🖥️ OLED (SSD1306) connects via I2C at address `0x3C`
+- 🦾 Servo signal pin → Arduino pin `8`
+- 🔌 Baud rate must match the Python side: `9600`
+
+## 💡 Notes
+
+- 🎥 Camera index may need a tweak (`cv2.VideoCapture(0)` vs `(1)`) depending
+  on your webcam setup
+- 🤫 Only pings the Arduino when the prediction *changes* and confidence is
+  high, so it's not spamming the serial port every single frame
+
+---
+Made with 🧠 + ☕ + a lot of homemade object photos 📷
 
 
 
